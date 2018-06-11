@@ -1,0 +1,42 @@
+\documentclass[a4paper]{article}
+\usepackage[MeX]{polski}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage[intlimits]{amsmath} % to głupie, ale ta paczka jest tu tylko po to, by dało się wykorzystać \text{} w otoczeniach matematycznych i otrzymać polskie znaki
+\usepackage{float}
+\usepackage{geometry}
+\newgeometry{tmargin=2.5cm, bmargin=2.5cm, lmargin=3cm, rmargin=2.5cm}
+\usepackage[export]{adjustbox} % obramowania obrazków
+%\usepackage{pgfplots} %wykresy
+%\pgfplotsset{compat=1.9}
+\graphicspath{{img/}}
+\title{\includegraphics[width=1 em]{logo} Virtual Machine Management System\\Karta Administratora}  %Tytuł
+\author{Project IO Group}
+\date{\today}
+\begin{document}
+  \maketitle
+
+  \section{Development}
+  \begin{itemize}
+    \item back-end:
+        \begin{itemize}
+            \item Projekt bazuje na \textbf{Gradle}, był rozwijany w \textbf{IntelliJ}.
+            \item Projekt wykorzystuje \textbf{Lombok}. Aby można było uruchomić projekt przez IDE, należy zainstalować odpowiedni plug-in (instrukcje dostępne na stronie projektu: \url{https://projectlombok.org/})
+            \item W konfiguracji developerskiej projekt wykorzystuje bazę danych embedded \textbf{PostgreSQL}. Parametry połączenia są zdefiniowane w \texttt{/src/main/resources/application-dev.properties}
+            \item Aplikcja korzysta z usługi \textbf{Sendgrid} do wysyłania e-maili. Do działania potrzebuje ustawionej zmiennej środowiskowej \texttt{SENDGRID\_API\_KEY} (w IntelliJ: \texttt{Run} $\rightarrow$ \texttt{Edit Configurations}) Bez niej aplikacja się nie uruchomi.
+        \end{itemize}
+    \item front-end:
+        \begin{itemize}
+            \item Budowanie release'owego front-endu: \texttt{npm run build:prod}
+        \end{itemize}
+    \end{itemize}
+
+  \section{end-pointy}
+  \begin{description}
+    \item[\texttt{/vm/import}] -- ładowanie pul maszyn wirtualnych do bazy danych. Jeśli w bazie danych były już informacje o pulach maszyn, zostają one usunięte. Przykład: \texttt{curl -i -X POST -F "file=@pcoip\_pools.csv" http://localhost:9045/vm/import}
+    \item[\texttt{/vm/update}] -- aktualizacja maszyn z pliku \texttt{csv}: pule, które występują w pliku, zostają zaktualizowane w bazie, natomiast pule już obecne w bazie, które nie występują w pliku, pozostają bez zmian.
+    \item[\texttt{/email/configure/subjects}] -- umożliwia zdefiniowanie tematów e-maili dostępnych do wysyłania w aplikacji. Przyjmuje zapytania \texttt{POST} z nagłówkiem \texttt{Content-Type: application/json} i \texttt{JSON}em w \texttt{body} (przykład w pliku \texttt{subject\_configuration\_example.json}). Nowa konfiguracja zastępuje poprzednią. Temat definiuje para \texttt{key} będąca kluczem, do którego odnosi się aplikacja, oraz \texttt{subject}, które faktycznie znajduje się w mailu.
+    \item[\texttt{/email/configure/admins}] -- umożliwia zdefiniowanie odbiorców e-maili wysyłanych w aplikacji. Przyjmuje zapytania \texttt{POST} z nagłówkiem \texttt{Content-Type: application/json} i \texttt{JSON}em w \texttt{body} (przykład w pliku \texttt{email\_configuration\_example.json}). Nowa konfiguracja zastępuje poprzednią. Administratora definiuje para \texttt{name}, \texttt{mail}; oba pola są wykorzystywane do generacji wiadomości.
+  \end{description}
+\end{document}

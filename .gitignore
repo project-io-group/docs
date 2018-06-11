@@ -1,0 +1,8 @@
+__latexindent_temp.tex
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+latex/*.pdf
+*.synctex.gz
+*.toc
